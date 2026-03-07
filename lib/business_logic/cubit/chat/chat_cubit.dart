@@ -37,7 +37,6 @@ class ChatCubit extends Cubit<ChatState> {
           MessageModel.fromMap(doc.data() as Map<String, dynamic>),
         );
       }
-
       emit(ChatSuccess(messages: messagesList));
     });
   }
