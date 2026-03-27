@@ -1,21 +1,22 @@
 import 'package:chatapp/business_logic/cubit/auth_cubit.dart';
 import 'package:chatapp/business_logic/cubit/chat/chat_cubit.dart';
-import 'package:chatapp/presentation/screens/chatPage.dart';
-import 'package:chatapp/presentation/screens/register_page.dart';
+import 'package:chatapp/const/app_router.dart';
 import 'package:chatapp/const/constants.dart';
+import 'package:chatapp/presentation/views/chatPage.dart';
+import 'package:chatapp/presentation/views/register_page.dart';
 import 'package:chatapp/presentation/widgets/customButton.dart';
 import 'package:chatapp/presentation/widgets/customShowDialog.dart';
 import 'package:chatapp/presentation/widgets/customSnakPar.dart';
 import 'package:chatapp/presentation/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatelessWidget {
+class loginView extends StatelessWidget {
   String? email;
   String? pass;
   GlobalKey<FormState> formKey = GlobalKey();
-  LoginPage({super.key});
-  static String id = 'LoginPage';
+  loginView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,12 +103,12 @@ class LoginPage extends StatelessWidget {
                         Navigator.pop(context);
                         showSnakBar(
                           context,
-                          'success',
+                          'Login successfully',
                           Colors.green[700],
                           Icons.done,
                         );
-                         context.read<ChatCubit>().getMessage();
-                          Navigator.pushNamed(context,chatPage.id,arguments:email);
+                        context.read<ChatCubit>().getMessages();
+                        GoRouter.of(context).push(AppRouter.chat, extra: state.user.email);
                       }
                       if (state is AuthError) {
                         Navigator.pop(context);
@@ -127,7 +128,6 @@ class LoginPage extends StatelessWidget {
                             email: email!,
                             password: pass!,
                           );
-                         
                         }
                       },
                     ),
@@ -148,7 +148,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () => {
-                          Navigator.pushNamed(context, RegisterPage.id),
+                          GoRouter.of(context).push(AppRouter.register),
                         },
                         child: Text(
                           'Register',

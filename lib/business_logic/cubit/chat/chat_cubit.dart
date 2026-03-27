@@ -13,31 +13,37 @@ class ChatCubit extends Cubit<ChatState> {
   CollectionReference messages = FirebaseFirestore.instance.collection(
     Kmessage,
   );
-  void sendMessage({required String message, required String email}) {
+  Future<void> sendMessages({
+    required String message,
+    required String email,
+  }) async {
     try {
-      DateTime now = DateTime.now();
-      var hour = now.hour % 12 == 0 ? 12 : now.hour % 12;
-      String minute = now.minute.toString().padLeft(2, '0');
-      String formattedTime = "$hour:$minute";
-      messages.add({
-        'message': message,
-        'createdAt': formattedTime,
-        'id': email,
-      });
-    } catch (e) {
-      emit(ChatFailure());
+      MessageModel messageModel = MessageModel(
+        email: email,
+        message: message,
+        createdAt: DateTime.now().toString(),
+      );
+      await messages.add(messageModel.toMap());
+    } on FirebaseException catch (e) {
+      emit(ChatFailure(errMessage: e.toString()));
     }
   }
 
-  void getMessage() {
-    messages.orderBy('createdAt', descending: true).snapshots().listen((event) {
-      List<MessageModel> messagesList = [];
-      for (var doc in event.docs) {
-        messagesList.add(
-          MessageModel.fromMap(doc.data() as Map<String, dynamic>),
-        );
-      }
-      emit(ChatSuccess(messages: messagesList));
-    });
+  void getMessages() {
+    try {
+      messages.orderBy('createdAt', descending: true).snapshots().listen((
+        events,
+      ) {
+        List<MessageModel> messagesList = [];
+        for (var event in events.docs) {
+          messagesList.add(
+            MessageModel.fromMap(event.data() as Map<String, dynamic>),
+          );
+        }
+        emit(ChatSuccess(messages: messagesList));
+      });
+    } on FirebaseException catch (e) {
+      emit(ChatFailure(errMessage: e.toString()));
+    }
   }
 }

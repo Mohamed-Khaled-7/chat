@@ -7,12 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class RegisterPage extends StatelessWidget {
+class registerView extends StatelessWidget {
   String? email;
   String? password;
   GlobalKey<FormState> formKey = GlobalKey();
-  RegisterPage({super.key});
-  static String id = 'RegisterPage';
+  registerView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

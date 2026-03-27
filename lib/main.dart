@@ -1,9 +1,7 @@
 import 'package:chatapp/business_logic/cubit/auth_cubit.dart';
 import 'package:chatapp/business_logic/cubit/chat/chat_cubit.dart';
+import 'package:chatapp/const/app_router.dart';
 import 'package:chatapp/firebase_options.dart';
-import 'package:chatapp/presentation/screens/chatPage.dart';
-import 'package:chatapp/presentation/screens/login_page.dart';
-import 'package:chatapp/presentation/screens/register_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,17 +22,9 @@ class ScholarChat extends StatelessWidget {
         BlocProvider(create: (context) => AuthCubit()),
         BlocProvider(create: (context) => ChatCubit()),
       ],
-      child: MaterialApp(
-        routes: {
-          chatPage.id: (context) => chatPage(),
-          LoginPage.id: (context) => LoginPage(),
-          RegisterPage.id: (context) => RegisterPage(),
-        },
-        initialRoute: 'LoginPage',
+      child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-        home: LoginPage(),
+        routerConfig: AppRouter.routers,
       ),
     );
   }

@@ -9,7 +9,7 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  register({required String email, required String password}) async {
+  void register({required String email, required String password}) async {
     emit(AuthLoading());
     try {
       await auth.createUserWithEmailAndPassword(
@@ -34,7 +34,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(message: e.toString()));
     }
   }
-  signIn({required String email, required String password}) async {
+ void signIn({required String email, required String password}) async {
     emit(AuthLoading());
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);

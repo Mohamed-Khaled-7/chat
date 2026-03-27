@@ -1,32 +1,48 @@
 import 'package:chatapp/business_logic/cubit/chat/chat_cubit.dart';
+import 'package:chatapp/data/models/Message.dart';
 import 'package:chatapp/presentation/widgets/chatBubel.dart';
 import 'package:chatapp/presentation/widgets/customSnakPar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class chatPage extends StatelessWidget {
-  chatPage({super.key});
-  static String id = 'chatPage';
+class chatView extends StatefulWidget {
+  chatView({super.key, required this.email});
+  String? email;
+  @override
+  State<chatView> createState() => _chatViewState();
+}
 
+class _chatViewState extends State<chatView> {
   TextEditingController messageController = TextEditingController();
-
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  @override
+  void dispose() {
+    messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.jumpTo(0);
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ChatCubit>().getMessages();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    context.read<ChatCubit>().getMessage();
-    var messageList = [];
-    String email = ModalRoute.of(context)!.settings.arguments.toString();
-    scrollToBottom();
     return WillPopScope(
       onWillPop: () async {
         SystemNavigator.pop();
@@ -53,9 +69,6 @@ class chatPage extends StatelessWidget {
             Expanded(
               child: BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
-                  if (state is ChatSuccess) {
-                    messageList = state.messages;
-                  }
                   if (state is ChatFailure) {
                     showSnakBar(
                       context,
@@ -63,18 +76,25 @@ class chatPage extends StatelessWidget {
                       Colors.red,
                       Icons.error,
                     );
+                  } else if (state is ChatSuccess) {
+                    scrollToBottom();
                   }
                 },
                 builder: (context, state) {
+                  List<MessageModel> messageList = [];
+                  if (state is ChatSuccess) {
+                    messageList = state.messages;
+                  }
                   return ListView.builder(
+                    physics: BouncingScrollPhysics(),
                     reverse: true,
                     controller: _scrollController,
                     itemCount: messageList.length,
                     itemBuilder: (context, index) {
-                      return messageList[index].id == email
-                          ? chatBuble(message: messageList[index]!)
+                      return messageList[index].email == widget.email
+                          ? chatBuble(messageModel: messageList[index])
                           : chatBubleForSender(
-                              message: messageList[index].message!,
+                              messageModel: messageList[index],
                             );
                     },
                   );
@@ -100,9 +120,9 @@ class chatPage extends StatelessWidget {
                     controller: messageController,
                     onSubmitted: (data) {
                       if (data.trim().isEmpty) return;
-                      context.read<ChatCubit>().sendMessage(
+                      context.read<ChatCubit>().sendMessages(
                         message: data,
-                        email: email.toString(),
+                        email: widget.email.toString(),
                       );
                       messageController.clear();
                       scrollToBottom();
@@ -113,9 +133,9 @@ class chatPage extends StatelessWidget {
                         onPressed: () {
                           String message = messageController.text.trim();
                           if (message.isEmpty) return;
-                          context.read<ChatCubit>().sendMessage(
+                          context.read<ChatCubit>().sendMessages(
                             message: message,
-                            email: email,
+                            email: widget.email!,
                           );
                           messageController.clear();
                           scrollToBottom();

@@ -1,9 +1,10 @@
 import 'package:chatapp/data/models/Message.dart';
+import 'package:chatapp/presentation/widgets/formated_date.dart';
 import 'package:flutter/material.dart';
 
 class chatBuble extends StatelessWidget {
-  final MessageModel message;
-  chatBuble({super.key, required this.message});
+  final MessageModel messageModel;
+  const chatBuble({super.key, required this.messageModel});
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +32,12 @@ class chatBuble extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              message.message!,
+              messageModel.message!,
               style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
             const SizedBox(height: 4),
             Text(
-              message.time!,
+              formatTime(messageModel.createdAt!),
               style: TextStyle(
                 color: Colors.white.withOpacity(0.7),
                 fontSize: 11,
@@ -50,8 +51,8 @@ class chatBuble extends StatelessWidget {
 }
 
 class chatBubleForSender extends StatelessWidget {
-  final MessageModel message;
-  chatBubleForSender({super.key, required this.message});
+  final MessageModel messageModel;
+  chatBubleForSender({super.key, required this.messageModel});
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +80,12 @@ class chatBubleForSender extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              message.message!,
+              messageModel.message!,
               style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
             const SizedBox(height: 4),
             Text(
-              message.time!,
+              formatTime(messageModel.createdAt!),
               style: TextStyle(
                 color: Colors.white.withOpacity(0.7),
                 fontSize: 11,
