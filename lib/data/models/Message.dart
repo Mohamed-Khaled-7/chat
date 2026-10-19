@@ -9,9 +9,9 @@ class MessageModel {
   });
   factory MessageModel.fromMap(Map<String, dynamic> jsonData) {
     return MessageModel(
-      message: jsonData['message'],
-      email: jsonData['email'],
-      createdAt: jsonData['createdAt'],
+      message: jsonData['message']??'',
+      email: jsonData['email']??'',
+      createdAt: jsonData['createdAt']?'':'',
     );
   }
   Map<String, dynamic> toMap() {

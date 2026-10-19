@@ -1,10 +1,7 @@
-import 'dart:convert';
-
-import 'package:bloc/bloc.dart';
 import 'package:chatapp/const/constants.dart';
 import 'package:chatapp/data/models/Message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'chat_state.dart';
 
